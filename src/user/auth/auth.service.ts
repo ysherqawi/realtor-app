@@ -1,5 +1,6 @@
 import { ConflictException, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
+import * as bcrypt from 'bcryptjs';
 
 interface SignupParams {
   name: string;
@@ -12,7 +13,7 @@ interface SignupParams {
 export class AuthService {
   constructor(private readonly prismaService: PrismaService) {}
 
-  async signup({ email }: SignupParams) {
+  async signup({ email, password }: SignupParams) {
     const userExist = await this.prismaService.user.findUnique({
       where: { email },
     });
@@ -21,6 +22,8 @@ export class AuthService {
       throw new ConflictException();
     }
 
-    console.log(userExist);
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    console.log(hashedPassword);
   }
 }
