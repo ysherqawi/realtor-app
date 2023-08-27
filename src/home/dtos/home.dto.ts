@@ -40,6 +40,8 @@ export class HomeResponseDto {
 
   price: number;
 
+  image: string;
+
   @Exclude()
   property_type: PropertyType;
 
