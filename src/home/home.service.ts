@@ -3,6 +3,17 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { HomeResponseDto } from './dtos/home.dto';
 import { PropertyType } from '@prisma/client';
 
+interface CreateHomeParams {
+  address: string;
+  numberOfBedrooms: number;
+  numberOfBathrooms: number;
+  city: string;
+  price: number;
+  landSize: number;
+  propertyType: PropertyType;
+  images: { url: string }[];
+}
+
 interface GetHomesParam {
   city?: string;
   price?: {
@@ -81,6 +92,40 @@ export class HomeService {
     if (!home) {
       throw new NotFoundException();
     }
+
+    return new HomeResponseDto(home);
+  }
+
+  async createHome({
+    address,
+    numberOfBathrooms,
+    numberOfBedrooms,
+    city,
+    landSize,
+    price,
+    propertyType,
+    images,
+  }: CreateHomeParams): Promise<HomeResponseDto> {
+    const home = await this.prismaService.home.create({
+      data: {
+        address,
+        number_of_bathrooms: numberOfBathrooms,
+        number_of_bedrooms: numberOfBedrooms,
+        city,
+        land_size: landSize,
+        property_type: propertyType,
+        price,
+        realtor_id: 16,
+      },
+    });
+
+    const homeImages = images.map((image) => {
+      return { ...image, home_id: home.id };
+    });
+
+    await this.prismaService.image.createMany({
+      data: homeImages,
+    });
 
     return new HomeResponseDto(home);
   }

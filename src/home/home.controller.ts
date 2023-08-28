@@ -7,9 +7,10 @@ import {
   Query,
   Param,
   ParseIntPipe,
+  Body,
 } from '@nestjs/common';
 import { HomeService } from './home.service';
-import { HomeResponseDto } from './dtos/home.dto';
+import { CreateHomeDto, HomeResponseDto } from './dtos/home.dto';
 import { PropertyType } from '@prisma/client';
 
 @Controller('home')
@@ -40,13 +41,15 @@ export class HomeController {
   }
 
   @Get('/:id')
-  getHome(@Param('id', ParseIntPipe) id: number): Promise<HomeResponseDto> {
+  async getHome(
+    @Param('id', ParseIntPipe) id: number,
+  ): Promise<HomeResponseDto> {
     return this.homeService.getHomeById(id);
   }
 
   @Post()
-  createHome() {
-    return {};
+  async createHome(@Body() body: CreateHomeDto): Promise<HomeResponseDto> {
+    return this.homeService.createHome(body);
   }
 
   @Put('/:id')
