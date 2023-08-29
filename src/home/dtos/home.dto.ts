@@ -5,6 +5,7 @@ import {
   IsEnum,
   IsNotEmpty,
   IsNumber,
+  IsOptional,
   IsPositive,
   IsString,
   ValidateNested,
@@ -54,8 +55,8 @@ export class HomeResponseDto {
   @Exclude()
   property_type: PropertyType;
 
-  @Expose({ name: 'PropertyType' })
-  PropertyType() {
+  @Expose({ name: 'propertyType' })
+  propertyType() {
     return this.property_type;
   }
 
@@ -111,4 +112,40 @@ export class CreateHomeDto {
 
   @IsEnum(PropertyType)
   propertyType: PropertyType;
+}
+
+export class UpdateHomeDto {
+  @IsOptional()
+  @IsString()
+  @IsNotEmpty()
+  address?: string;
+
+  @IsOptional()
+  @IsString()
+  @IsNotEmpty()
+  city?: string;
+
+  @IsOptional()
+  @IsNumber()
+  @IsPositive()
+  landSize?: number;
+
+  @IsOptional()
+  @IsNumber()
+  @IsPositive()
+  numberOfBedrooms?: number;
+
+  @IsOptional()
+  @IsNumber()
+  @IsPositive()
+  numberOfBathrooms?: number;
+
+  @IsOptional()
+  @IsNumber()
+  @IsPositive()
+  price?: number;
+
+  @IsOptional()
+  @IsEnum(PropertyType)
+  propertyType?: PropertyType;
 }

@@ -3,17 +3,6 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { HomeResponseDto } from './dtos/home.dto';
 import { PropertyType } from '@prisma/client';
 
-interface CreateHomeParams {
-  address: string;
-  numberOfBedrooms: number;
-  numberOfBathrooms: number;
-  city: string;
-  price: number;
-  landSize: number;
-  propertyType: PropertyType;
-  images: { url: string }[];
-}
-
 interface GetHomesParam {
   city?: string;
   price?: {
@@ -34,6 +23,27 @@ const homeSelect = {
   price: true,
   property_type: true,
 };
+
+interface CreateHomeParams {
+  address: string;
+  numberOfBedrooms: number;
+  numberOfBathrooms: number;
+  city: string;
+  price: number;
+  landSize: number;
+  propertyType: PropertyType;
+  images: { url: string }[];
+}
+interface UpateHomeParams {
+  address?: string;
+  numberOfBedrooms?: number;
+  numberOfBathrooms?: number;
+  city?: string;
+  price?: number;
+  landSize?: number;
+  propertyType?: PropertyType;
+}
+
 @Injectable()
 export class HomeService {
   constructor(private readonly prismaService: PrismaService) {}
@@ -128,5 +138,39 @@ export class HomeService {
     });
 
     return new HomeResponseDto(home);
+  }
+
+  async updateHome(
+    id: number,
+    {
+      address,
+      numberOfBathrooms,
+      numberOfBedrooms,
+      city,
+      landSize,
+      price,
+      propertyType,
+    }: UpateHomeParams,
+  ): Promise<HomeResponseDto> {
+    const home = await this.prismaService.home.findUnique({ where: { id } });
+
+    if (!home) {
+      throw new NotFoundException();
+    }
+
+    const updateHome = await this.prismaService.home.update({
+      where: { id },
+      data: {
+        address,
+        number_of_bathrooms: numberOfBathrooms,
+        number_of_bedrooms: numberOfBedrooms,
+        city,
+        land_size: landSize,
+        property_type: propertyType,
+        price,
+      },
+    });
+
+    return new HomeResponseDto(updateHome);
   }
 }
