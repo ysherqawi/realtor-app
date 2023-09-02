@@ -12,7 +12,12 @@ import {
 } from '@nestjs/common';
 import { PropertyType, UserType } from '@prisma/client';
 import { HomeService } from './home.service';
-import { CreateHomeDto, HomeResponseDto, UpdateHomeDto } from './dtos/home.dto';
+import {
+  CreateHomeDto,
+  HomeResponseDto,
+  InquireDto,
+  UpdateHomeDto,
+} from './dtos/home.dto';
 import { User, UserInfo } from 'src/user/decorators/user.decorator';
 import { Roles } from 'src/decorators/roles.decorator';
 
@@ -88,5 +93,15 @@ export class HomeController {
     }
 
     return this.homeService.deleteHome(id);
+  }
+
+  @Roles(UserType.BUYER)
+  @Post('/inquire/:id')
+  inquire(
+    @Body() { message }: InquireDto,
+    @Param('id', ParseIntPipe) homeId: number,
+    @User() user: UserInfo,
+  ) {
+    return this.homeService.inquire(homeId, user, message);
   }
 }
