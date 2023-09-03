@@ -7,9 +7,19 @@ import { UserModule } from './user/user.module';
 import { HomeModule } from './home/home.module';
 import { UserInterceptor } from './user/interceptors/user.interceptor';
 import { AuthGuard } from './guards/auth.guard';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { join } from 'path';
 
 @Module({
-  imports: [UserModule, PrismaModule, HomeModule],
+  imports: [
+    UserModule,
+    PrismaModule,
+    HomeModule,
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '..', 'public'),
+      exclude: ['/api*'],
+    }),
+  ],
   controllers: [AppController],
   providers: [
     AppService,
